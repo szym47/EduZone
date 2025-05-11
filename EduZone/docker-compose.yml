@@ -36,4 +36,4 @@ services:
       - "6379:6379"
 
 volumes:
-  mssql_data:
+  mssql_data:  

@@ -4,9 +4,9 @@ using EduZone.Domain.Repositories;
 using EduZone.Domain.Seeders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
-namespace EduZoneService
-{
+namespace EduZoneService;
     public class Program
     {
         public static async Task Main(string[] args)
@@ -65,5 +65,3 @@ namespace EduZoneService
             app.Run();
         }
     }
-
-}

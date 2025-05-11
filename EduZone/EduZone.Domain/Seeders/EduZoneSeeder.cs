@@ -12,26 +12,39 @@ namespace EduZone.Domain.Seeders
             {
                 var categories = new List<Category>
                 {
-                    new Category { Name = "Klocki" },
+                    new Category { Name = "Programowanie" },
+                    new Category { Name = "Matematyka" },
+                    new Category { Name = "Języki obce" }
                 };
 
                 context.Categories.AddRange(categories);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
-            if (!context.Products.Any())
+
+            if (!context.Courses.Any())
             {
                 var category = await context.Categories
-                        .Where(x => x.Name == "Klocki").FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync(c => c.Name == "Programowanie");
 
-                var products = new List<Product>
+                var course = new Course
                 {
-                    new Product { Name = "Cobi", Ean = "1234", Category = category },
-                    new Product { Name = "Duplo", Ean = "431", Category = category },
-                    new Product { Name = "Lego", Ean = "12212", Category = category }
+                    Title = "Podstawy C#",
+                    Description = "Kurs wprowadzający do języka C#",
+                    Price = 99.99m,
+                    Category = category!,
+                    VideoMaterials = new List<VideoMaterial>
+                    {
+                        new VideoMaterial { Title = "Wstęp do C#", Url = "https://example.com/video1" },
+                        new VideoMaterial { Title = "Zmienne i typy danych", Url = "https://example.com/video2" }
+                    },
+                    PdfMaterials = new List<PdfMaterial>
+                    {
+                        new PdfMaterial { Title = "Notatki PDF", FilePath = "/files/csharp_intro.pdf" }
+                    }
                 };
 
-                context.Products.AddRange(products);
-                context.SaveChanges();
+                context.Courses.Add(course);
+                await context.SaveChangesAsync();
             }
         }
     }

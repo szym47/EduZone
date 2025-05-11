@@ -12,6 +12,8 @@ namespace EduZone.Domain.Repositories
             _context = dataContext;
         }
 
+        #region Product
+
         public async Task<Product> AddProductAsync(Product product)
         {
             _context.Products.Add(product);
@@ -35,5 +37,43 @@ namespace EduZone.Domain.Repositories
             await _context.SaveChangesAsync();
             return product;
         }
+
+        #endregion
+
+        #region Course
+
+        public async Task<Course> AddCourseAsync(Course course)
+        {
+            _context.Courses.Add(course);
+            await _context.SaveChangesAsync();
+            return course;
+        }
+
+        public async Task<Course?> GetCourseAsync(int id)
+        {
+            return await _context.Courses
+                .Include(c => c.Category)
+                .Include(c => c.VideoMaterials)
+                .Include(c => c.PdfMaterials)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<List<Course>> GetAllCoursesAsync()
+        {
+            return await _context.Courses
+                .Include(c => c.Category)
+                .Include(c => c.VideoMaterials)
+                .Include(c => c.PdfMaterials)
+                .ToListAsync();
+        }
+
+        public async Task<Course> UpdateCourseAsync(Course course)
+        {
+            _context.Courses.Update(course);
+            await _context.SaveChangesAsync();
+            return course;
+        }
+
+        #endregion
     }
 }
