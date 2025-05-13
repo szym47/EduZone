@@ -33,7 +33,7 @@ public class Program
 
 
 
-        builder.Services.AddScoped<IProductSeeder, ProductSeeder>();
+        builder.Services.AddScoped<ICourseSeeder, CourseSeeder>();
         builder.Services.AddMemoryCache();
 
         var app = builder.Build();
@@ -41,7 +41,7 @@ public class Program
         {
             var db = scope.ServiceProvider.GetRequiredService<DataContext>();
             await db.Database.MigrateAsync();
-            var seeder = scope.ServiceProvider.GetRequiredService<IProductSeeder>();
+            var seeder = scope.ServiceProvider.GetRequiredService<ICourseSeeder>();
             await seeder.Seed();
         }
         // Configure the HTTP request pipeline.

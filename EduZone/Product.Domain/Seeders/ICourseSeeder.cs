@@ -1,6 +1,6 @@
 ﻿namespace Product.Domain.Seeders
 {
-    public interface IProductSeeder
+    public interface ICourseSeeder
     {
         Task Seed();
     }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Product.Domain.Seeders
 {
-    public class ProductSeeder(DataContext context) : IProductSeeder
+    public class CourseSeeder(DataContext context) : ICourseSeeder
     {
         public async Task Seed()
         {
