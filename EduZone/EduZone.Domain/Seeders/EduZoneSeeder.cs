@@ -21,30 +21,21 @@ namespace EduZone.Domain.Seeders
                 await context.SaveChangesAsync();
             }
 
-            if (!context.Courses.Any())
+            if (!context.Products.Any())
             {
                 var category = await context.Categories
-                    .FirstOrDefaultAsync(c => c.Name == "Programowanie");
+                        .Where(x => x.Name == "Programowanie").FirstOrDefaultAsync();
 
-                var course = new Course
+                var products = new List<Product>
                 {
-                    Title = "Podstawy C#",
-                    Description = "Kurs wprowadzający do języka C#",
-                    Price = 99.99m,
-                    Category = category!,
-                    VideoMaterials = new List<VideoMaterial>
-                    {
-                        new VideoMaterial { Title = "Wstęp do C#", Url = "https://example.com/video1" },
-                        new VideoMaterial { Title = "Zmienne i typy danych", Url = "https://example.com/video2" }
-                    },
-                    PdfMaterials = new List<PdfMaterial>
-                    {
-                        new PdfMaterial { Title = "Notatki PDF", FilePath = "/files/csharp_intro.pdf" }
-                    }
+                    new Product { Name = "VideoMaterial", Ean = "1234", Category = category },
+                    new Product { Name = "PdfMaterial", Ean = "431", Category = category },
+                    new Product { Name = "Online1hMeeting", Ean = "12212", Category = category }
                 };
 
-                context.Courses.Add(course);
-                await context.SaveChangesAsync();
+
+                context.Products.AddRange(products);
+                context.SaveChanges();
             }
         }
     }

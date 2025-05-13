@@ -11,12 +11,6 @@ namespace EduZone.Domain.Repositories
 
         public DbSet<Product> Products { get; set; }
 
-        public DbSet<Course> Courses { get; set; }
-
-        public DbSet<VideoMaterial> VideoMaterials { get; set; }
-
-        public DbSet<PdfMaterial> PdfMaterials { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -9,10 +9,4 @@ public interface IRepository
     Task<List<Product>> GetAllProductAsync();
     #endregion
 
-    #region Course
-    Task<Course> AddCourseAsync(Course course);
-    Task<Course?> GetCourseAsync(int id);
-    Task<List<Course>> GetAllCoursesAsync();
-    Task<Course> UpdateCourseAsync(Course course);
-    #endregion
 }

@@ -40,40 +40,5 @@ namespace EduZone.Domain.Repositories
 
         #endregion
 
-        #region Course
-
-        public async Task<Course> AddCourseAsync(Course course)
-        {
-            _context.Courses.Add(course);
-            await _context.SaveChangesAsync();
-            return course;
-        }
-
-        public async Task<Course?> GetCourseAsync(int id)
-        {
-            return await _context.Courses
-                .Include(c => c.Category)
-                .Include(c => c.VideoMaterials)
-                .Include(c => c.PdfMaterials)
-                .FirstOrDefaultAsync(c => c.Id == id);
-        }
-
-        public async Task<List<Course>> GetAllCoursesAsync()
-        {
-            return await _context.Courses
-                .Include(c => c.Category)
-                .Include(c => c.VideoMaterials)
-                .Include(c => c.PdfMaterials)
-                .ToListAsync();
-        }
-
-        public async Task<Course> UpdateCourseAsync(Course course)
-        {
-            _context.Courses.Update(course);
-            await _context.SaveChangesAsync();
-            return course;
-        }
-
-        #endregion
     }
 }
