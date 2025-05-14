@@ -9,18 +9,8 @@ services:
       context: .
       dockerfile: UserService/Dockerfile
 
-  invoiceservice:
-    image: ${DOCKER_REGISTRY-}userservice
-    depends_on:
-      - db
-    environment:
-      - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
-    build:
-      context: .
-      dockerfile: InvoiceService/Dockerfile
-
   productservice:
-    image: ${DOCKER_REGISTRY-}userservice
+    image: ${DOCKER_REGISTRY-}productservice
     depends_on:
       - db
     environment:
@@ -30,7 +20,7 @@ services:
       dockerfile: ProductService/Dockerfile
 
   cartservice:
-    image: ${DOCKER_REGISTRY-}userservice
+    image: ${DOCKER_REGISTRY-}cartservice
     depends_on:
       - db
     environment:
@@ -38,7 +28,37 @@ services:
     build:
       context: .
       dockerfile: CartService/Dockerfile
-      
+
+  # orderservice:
+  #   image: ${DOCKER_REGISTRY-}orderservice
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+  #   build:
+  #     context: .
+  #     dockerfile: CartService/Dockerfile
+
+  # paymentservice:
+  #   image: ${DOCKER_REGISTRY-}paymentservice
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+  #   build:
+  #     context: .
+  #     dockerfile: PaymentService/Dockerfile
+
+  invoiceservice:
+    image: ${DOCKER_REGISTRY-}invoiceservice
+    depends_on:
+      - db
+    environment:
+      - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+    build:
+      context: .
+      dockerfile: InvoiceService/Dockerfile
+
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
