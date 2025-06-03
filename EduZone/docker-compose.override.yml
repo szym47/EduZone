@@ -1,11 +1,12 @@
 version: '3.4'
 
 services:
-  productservice:
+  product.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=http://+:8080
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -15,11 +16,12 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  userservice:
+  user.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8070
       - ASPNETCORE_HTTPS_PORTS=8071
+      - ASPNETCORE_URLS=http://+:8070
     ports:
       - "8070:8070"
       - "8071:8071"
@@ -29,11 +31,12 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
        
-  cartservice:
+  cart.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8060
       - ASPNETCORE_HTTPS_PORTS=8061
+      - ASPNETCORE_URLS=http://+:8060
     ports:
       - "8060:8060"
       - "8061:8061"
@@ -43,11 +46,12 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  # orderservice:
+  # order.api:
   #   environment:
   #     - ASPNETCORE_ENVIRONMENT=Development
   #     - ASPNETCORE_HTTP_PORTS=8050
   #     - ASPNETCORE_HTTPS_PORTS=8051
+  #     - ASPNETCORE_URLS=http://+:8050
   #   ports:
   #     - "8050:8050"
   #     - "8051:8051"
@@ -57,11 +61,12 @@ services:
   #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
   #     - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  # paymentservice:
+  # payment.api:
   #   environment:
   #     - ASPNETCORE_ENVIRONMENT=Development
   #     - ASPNETCORE_HTTP_PORTS=8040
   #     - ASPNETCORE_HTTPS_PORTS=8041
+  #     - ASPNETCORE_URLS=http://+:8040
   #   ports:
   #     - "8040:8040"
   #     - "8041:8041"
@@ -71,11 +76,12 @@ services:
   #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
   #     - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  invoiceservice:
+  invoice.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8030
       - ASPNETCORE_HTTPS_PORTS=8031
+      - ASPNETCORE_URLS=http://+:8030
     ports:
       - "8030:8030"
       - "8031:8031"

@@ -1,63 +1,64 @@
 services:
-  userservice:
-    image: ${DOCKER_REGISTRY-}userservice
+
+  product.api:
+    image: ${DOCKER_REGISTRY-}product.api
     depends_on:
       - db
     environment:
       - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
     build:
       context: .
-      dockerfile: UserService/Dockerfile
+      dockerfile: Product.API/Dockerfile
 
-  productservice:
-    image: ${DOCKER_REGISTRY-}productservice
+  user.api:
+    image: ${DOCKER_REGISTRY-}user.api
     depends_on:
       - db
     environment:
       - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
     build:
       context: .
-      dockerfile: ProductService/Dockerfile
+      dockerfile: User.API/Dockerfile
 
-  cartservice:
-    image: ${DOCKER_REGISTRY-}cartservice
+  cart.api:
+    image: ${DOCKER_REGISTRY-}cart.api
     depends_on:
       - db
     environment:
       - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
     build:
       context: .
-      dockerfile: CartService/Dockerfile
+      dockerfile: Cart.API/Dockerfile
 
-  # orderservice:
-  #   image: ${DOCKER_REGISTRY-}orderservice
+  # order.api:
+  #   image: ${DOCKER_REGISTRY-}order.api
   #   depends_on:
   #     - db
   #   environment:
   #     - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
   #   build:
   #     context: .
-  #     dockerfile: CartService/Dockerfile
+  #     dockerfile: Cart.API/Dockerfile
 
-  # paymentservice:
-  #   image: ${DOCKER_REGISTRY-}paymentservice
+  # payment.api:
+  #   image: ${DOCKER_REGISTRY-}payment.api
   #   depends_on:
   #     - db
   #   environment:
   #     - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
   #   build:
   #     context: .
-  #     dockerfile: PaymentService/Dockerfile
+  #     dockerfile: Payment.API/Dockerfile
 
-  invoiceservice:
-    image: ${DOCKER_REGISTRY-}invoiceservice
+  invoice.api:
+    image: ${DOCKER_REGISTRY-}invoice.api
     depends_on:
       - db
     environment:
       - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
     build:
       context: .
-      dockerfile: InvoiceService/Dockerfile
+      dockerfile: Invoice.API/Dockerfile
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
