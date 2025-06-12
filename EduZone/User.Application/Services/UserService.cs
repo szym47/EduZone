@@ -26,7 +26,8 @@ namespace User.Application.Services
                 Username = request.Username,
                 FullName = request.FullName,
                 Email = request.Email,
-                Password = HashPassword(request.Password)
+                Password = HashPassword(request.Password),
+                Role = "User" // <== domyślna rola
             };
 
             await _repository.AddAsync(user);
