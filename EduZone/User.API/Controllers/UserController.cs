@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using User.Application.Services;
 using User.Domain.Models.Requests;
 
@@ -39,8 +40,17 @@ namespace User.API.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            var success = await _userService.ResetPasswordAsync(request.Email);
-            return success ? Ok("Password reset to newpassword123") : NotFound("Email not found.");
+            var success = await _userService.ResetPasswordAsync(request);
+            return success ? Ok("Password reset successful.") : NotFound("Email not found.");
         }
+
+        [HttpPut("{id}/change-role")]
+        [Authorize(Policy = "AdminOnly")] //  tylko administrator może awansować innych
+        public async Task<IActionResult> ChangeUserRoleAsync(int id, string newRole)
+        {
+            var success = await _userService.ChangeUserRoleAsync(id, newRole);
+            return success ? Ok("User role changed.") : NotFound("User not found.");
+        }
+
     }
 }

@@ -1,9 +1,11 @@
-﻿using System.Security.Cryptography;
+﻿using Azure.Core;
+using System.Security.Cryptography;
 using System.Text;
-using User.Domain.Models;
+using User.Domain.Roles;
 using User.Domain.Models.Requests;
 using User.Domain.Models.UserModel;
 using User.Domain.Repositories;
+
 
 namespace User.Application.Services
 {
@@ -27,7 +29,7 @@ namespace User.Application.Services
                 FullName = request.FullName,
                 Email = request.Email,
                 Password = HashPassword(request.Password),
-                Role = "User" // <== domyślna rola
+                Role = "Client" // <== domyślna rola
             };
 
             await _repository.AddAsync(user);
@@ -47,15 +49,16 @@ namespace User.Application.Services
             return user;
         }
 
-        public async Task<bool> ResetPasswordAsync(string email)
+        public async Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
         {
-            var user = await _repository.GetByEmailAsync(email);
+            var user = await _repository.GetByEmailAsync(request.Email);
             if (user == null) return false;
 
-            user.Password = HashPassword("newpassword123"); // symulacja resetu
+            user.Password = HashPassword(request.NewPassword);
             await _repository.UpdateAsync(user);
             return true;
         }
+
 
         private string HashPassword(string password)
         {
@@ -63,5 +66,19 @@ namespace User.Application.Services
             var bytes = Encoding.UTF8.GetBytes(password);
             return Convert.ToBase64String(sha.ComputeHash(bytes));
         }
+
+        public async Task<bool> ChangeUserRoleAsync(int userId, string newRole)
+        {
+            if (!UserRoles.All.Contains(newRole))
+                throw new ArgumentException("Invalid role provided.");
+
+            var user = await _repository.GetByIdAsync(userId);
+            if (user == null) return false;
+
+            user.Role = newRole;
+            await _repository.UpdateAsync(user);
+            return true;
+        }
+
     }
 }

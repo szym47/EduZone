@@ -9,6 +9,8 @@ namespace User.Application.Services
         Task<UserAccount> RegisterAsync(RegisterRequest request);
         Task<UserAccount?> GetByIdAsync(int id);
         Task<UserAccount?> UpdateAsync(int id, UpdateUserRequest request);
-        Task<bool> ResetPasswordAsync(string email);
+        Task<bool> ResetPasswordAsync(ResetPasswordRequest request);
+        Task<bool> ChangeUserRoleAsync(int userId, string newRole);
+
     }
 }

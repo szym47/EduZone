@@ -19,18 +19,19 @@ namespace User.API.Controllers
 
 
         [HttpPost]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             try
             {
-                var token = _loginService.Login(request.Username, request.Password);
+                var token = await _loginService.Login(request.Username, request.Password);
                 return Ok(new { token });
             }
-            catch(InvalidCredentialsException)
+            catch (InvalidCredentialsException)
             {
                 return Unauthorized();
             }
         }
+
 
         [HttpGet]
         [Authorize]
