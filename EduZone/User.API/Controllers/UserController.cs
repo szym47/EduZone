@@ -46,10 +46,17 @@ namespace User.API.Controllers
 
         [HttpPut("{id}/change-role")]
         [Authorize(Policy = "AdminOnly")] //  tylko administrator może awansować innych
-        public async Task<IActionResult> ChangeUserRoleAsync(int id, string newRole)
+        public async Task<IActionResult> ChangeRole(int id, [FromBody] ChangeRoleRequest request)
         {
-            var success = await _userService.ChangeUserRoleAsync(id, newRole);
-            return success ? Ok("User role changed.") : NotFound("User not found.");
+            try
+            {
+                var result = await _userService.ChangeUserRoleAsync(id, request);
+                return result ? Ok("Role updated.") : NotFound("User not found.");
+            }
+            catch (ArgumentException e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
     }

@@ -67,15 +67,15 @@ namespace User.Application.Services
             return Convert.ToBase64String(sha.ComputeHash(bytes));
         }
 
-        public async Task<bool> ChangeUserRoleAsync(int userId, string newRole)
+        public async Task<bool> ChangeUserRoleAsync(int userId, ChangeRoleRequest request)
         {
-            if (!UserRoles.All.Contains(newRole))
+            if (!UserRoles.All.Contains(request.NewRole))
                 throw new ArgumentException("Invalid role provided.");
 
             var user = await _repository.GetByIdAsync(userId);
             if (user == null) return false;
 
-            user.Role = newRole;
+            user.Role = request.NewRole;
             await _repository.UpdateAsync(user);
             return true;
         }

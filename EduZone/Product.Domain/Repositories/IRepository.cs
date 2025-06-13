@@ -9,4 +9,13 @@ public interface IRepository
     Task<List<Course>> GetAllCourseAsync();
     #endregion
 
+    #region Category
+    Task<List<Category>> GetAllCategoriesAsync();
+    Task<Category?> GetCategoryAsync(int id);
+    Task<Category> AddCategoryAsync(Category category);
+    Task<Category> UpdateCategoryAsync(Category category);
+    Task<bool> DeleteCategoryAsync(int id);
+
+    #endregion
+
 }

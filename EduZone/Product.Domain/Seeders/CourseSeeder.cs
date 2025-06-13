@@ -14,7 +14,9 @@ namespace Product.Domain.Seeders
                 {
                     new Category { Name = "Programowanie" },
                     new Category { Name = "Matematyka" },
-                    new Category { Name = "Języki obce" }
+                    new Category { Name = "Języki obce" },
+                    new Category { Name = "Biznes i marketing" },
+                    new Category { Name = "Design i UX" }
                 };
 
                 context.Categories.AddRange(categories);
@@ -23,19 +25,20 @@ namespace Product.Domain.Seeders
 
             if (!context.Courses.Any())
             {
-                var category = await context.Categories
-                        .Where(x => x.Name == "Programowanie").FirstOrDefaultAsync();
+                var programmingCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Programowanie");
+                var mathCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Matematyka");
 
                 var courses = new List<Course>
                 {
-                    new Course { Name = "VideoMaterial", Ean = "1234", Category = category },
-                    new Course { Name = "PdfMaterial", Ean = "431", Category = category },
-                    new Course { Name = "Online1hMeeting", Ean = "12212", Category = category }
+                    new Course { Name = "C# od podstaw", Ean = "C1234", Price = 199.99m, Stock = 50, Sku = "C-SHARP-001", Category = programmingCategory! },
+                    new Course { Name = "ASP.NET Core MVC", Ean = "C5678", Price = 249.99m, Stock = 30, Sku = "ASP-NET-001", Category = programmingCategory! },
+                    new Course { Name = "Matematyka dyskretna", Ean = "M1122", Price = 149.00m, Stock = 20, Sku = "MATH-001", Category = mathCategory! },
+                    new Course { Name = "Algebra liniowa", Ean = "M3344", Price = 129.00m, Stock = 15, Sku = "MATH-002", Category = mathCategory! },
+                    new Course { Name = "SQL i relacyjne bazy danych", Ean = "C9012", Price = 179.99m, Stock = 25, Sku = "SQL-001", Category = programmingCategory! }
                 };
 
-
                 context.Courses.AddRange(courses);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
     }

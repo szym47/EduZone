@@ -10,7 +10,7 @@ namespace User.Application.Services
         Task<UserAccount?> GetByIdAsync(int id);
         Task<UserAccount?> UpdateAsync(int id, UpdateUserRequest request);
         Task<bool> ResetPasswordAsync(ResetPasswordRequest request);
-        Task<bool> ChangeUserRoleAsync(int userId, string newRole);
+        Task<bool> ChangeUserRoleAsync(int id,ChangeRoleRequest request);
 
     }
 }

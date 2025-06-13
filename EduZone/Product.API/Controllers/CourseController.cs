@@ -1,11 +1,7 @@
-﻿using Product.Application;
-using ProductDomain.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
 using Product.Application.Services;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using ProductDomain.Models;
+using System.Threading.Tasks;
 
 namespace Product.API.Controllers
 {
@@ -13,68 +9,78 @@ namespace Product.API.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
-        private ICourseService _courseService;
-        public CourseController(ICourseService courseService)
+        private readonly ICourseService _course;
+
+        public CourseController(ICourseService course)
         {
-            _courseService = courseService;
+            _course = course;
         }
 
-        // GET: api/<CourseController>
+        // GET: api/Course
         [HttpGet]
-        public async Task<ActionResult> Get()
+        public async Task<IActionResult> Get()
         {
-            var result = await _courseService.GetAllAsync();
+            var result = await _course.GetAllAsync();
             return Ok(result);
         }
 
-        // GET api/<CourseController>/5
+        // GET: api/Course/5
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var result = await _courseService.GetAsync(id);
-            if (result == null)
+            var result = await _course.GetAsync(id);
+            if (result == null || result.Deleted)
             {
                 return NotFound();
             }
-
             return Ok(result);
         }
 
-        // POST api/<CourseController>
+        // POST: api/Course
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Course courseService)
+        public async Task<IActionResult> Post([FromBody] Course course)
         {
-            var result = await _courseService.AddAsync(courseService);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            return Ok(result);
+            var result = await _course.AddAsync(course);
+            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
 
-        // PUT api/<CourseController>/5
+        // PUT: api/Course/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] Course courseService)
+        public async Task<IActionResult> Put(int id, [FromBody] Course course)
         {
-            var result = await _courseService.UpdateAsync(courseService);
+            if (id != course.Id)
+                return BadRequest("ID incorrect");
 
-            return Ok(result);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var updated = await _course.UpdateAsync(course);
+            return Ok(updated);
         }
 
-        // DELETE api/<CourseController>/5
+        // DELETE: api/Course/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var course = await _courseService.GetAsync(id);
+            var course = await _course.GetAsync(id);
+            if (course == null || course.Deleted)
+                return NotFound();
+
             course.Deleted = true;
-            var result = await _courseService.UpdateAsync(course);
+            var result = await _course.UpdateAsync(course);
 
             return Ok(result);
         }
 
-        [HttpPatch]
-        public ActionResult Add([FromBody] Course courseService)
+        [HttpPost("restore/{id}")]
+        public async Task<IActionResult> Restore(int id)
         {
-            var result = _courseService.Add(courseService);
-
-            return Ok(result);
+            var restored = await _course.RestoreAsync(id);
+            return restored == null ? NotFound() : Ok(restored);
         }
+
     }
 }

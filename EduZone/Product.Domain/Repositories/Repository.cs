@@ -23,8 +23,11 @@ namespace Product.Domain.Repositories
 
         public async Task<List<Course>> GetAllCourseAsync()
         {
-            return await _context.Courses.ToListAsync();
+            return await _context.Courses
+                .Where(c => !c.Deleted)
+                .ToListAsync();
         }
+
 
         public async Task<Course> GetCourseAsync(int id)
         {
@@ -39,6 +42,50 @@ namespace Product.Domain.Repositories
         }
 
         #endregion
+
+
+        #region Category
+
+        public async Task<List<Category>> GetAllCategoriesAsync()
+        {
+            return await _context.Categories
+                .Where(c => !c.Deleted)
+                .ToListAsync();
+        }
+
+        public async Task<Category?> GetCategoryAsync(int id)
+        {
+            return await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Category> AddCategoryAsync(Category category)
+        {
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+            return category;
+        }
+
+        public async Task<Category> UpdateCategoryAsync(Category category)
+        {
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
+            return category;
+        }
+
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null) return false;
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+            return true;
+
+
+        }
+
+        #endregion
+
 
     }
 }

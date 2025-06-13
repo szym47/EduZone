@@ -66,4 +66,14 @@ public class CourseService : ICourseService
 
         return result;
     }
+
+    public async Task<Course> RestoreAsync(int id)
+    {
+        var course = await _repository.GetCourseAsync(id);
+        if (course == null) return null;
+
+        course.Deleted = false;
+        return await _repository.UpdateCourseAsync(course);
+    }
+
 }
