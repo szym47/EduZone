@@ -1,25 +1,45 @@
-var builder = WebApplication.CreateBuilder(args);
+using MediatR;
+using ShoppingCart.Application.Services;
+using ShoppingCart.Domain.Interfaces;
+using ShoppingCart.Infrastructure.Repositories;
 
-// Add services to the container.
-builder.Services.AddRazorPages();
+namespace ShoppingCart;
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+public class Program
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+
+        // Add services to the container.
+        builder.Services.AddControllers();
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CartService).Assembly));
+
+        builder.Services.AddSingleton<ICartRepository, InMemoryCartRepository>();
+        builder.Services.AddSingleton<ICartAdder, CartService>();
+        builder.Services.AddSingleton<ICartRemover, CartService>();
+        builder.Services.AddSingleton<ICartReader, CartService>();
+
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+
+        app.MapControllers();
+
+        app.Run();
+    }
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapRazorPages();
-
-app.Run();
