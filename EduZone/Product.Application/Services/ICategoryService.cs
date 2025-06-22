@@ -9,7 +9,7 @@ namespace Product.Application.Services
         Task<Category> AddAsync(Category category);
         Task<Category> UpdateAsync(Category category);
         Task<bool> DeleteAsync(int id);
-        Task<Course> RestoreAsync(int id); 
+        Task<Category> RestoreAsync(int id); 
 
     }
 }

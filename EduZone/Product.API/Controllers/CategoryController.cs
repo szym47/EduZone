@@ -2,6 +2,8 @@
 using Product.Application.Services;
 using ProductDomain.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Product.API.Controllers
 {
@@ -40,6 +42,7 @@ namespace Product.API.Controllers
             return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Category category)
         {
@@ -48,7 +51,7 @@ namespace Product.API.Controllers
             var updated = await _category.UpdateAsync(category);
             return Ok(updated);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -56,13 +59,14 @@ namespace Product.API.Controllers
             if (!success) return NotFound();
             return NoContent();
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost("restore/{id}")]
         public async Task<IActionResult> Restore(int id)
         {
             var restored = await _category.RestoreAsync(id);
             return restored == null ? NotFound() : Ok(restored);
         }
+
 
     }
 }

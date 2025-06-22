@@ -1,15 +1,5 @@
 services:
 
-  product.api:
-    image: ${DOCKER_REGISTRY-}product.api
-    depends_on:
-      - db
-    environment:
-      - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
-    build:
-      context: .
-      dockerfile: Product.API/Dockerfile
-
   user.api:
     image: ${DOCKER_REGISTRY-}user.api
     depends_on:
@@ -19,6 +9,16 @@ services:
     build:
       context: .
       dockerfile: User.API/Dockerfile
+
+  product.api:
+    image: ${DOCKER_REGISTRY-}product.api
+    depends_on:
+      - db
+    environment:
+      - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+    build:
+      context: .
+      dockerfile: Product.API/Dockerfile
 
   cart.api:
     image: ${DOCKER_REGISTRY-}cart.api

@@ -36,14 +36,11 @@ namespace Product.Application.Services
         {
             return await _repository.DeleteCategoryAsync(id);
         }
-        public async Task<Course> RestoreAsync(int id)
+        public async Task<Category?> RestoreAsync(int id)
         {
-            var course = await _repository.GetCourseAsync(id);
-            if (course == null) return null;
-
-            course.Deleted = false;
-            return await _repository.UpdateCourseAsync(course);
+            return await _repository.RestoreCategoryAsync(id);
         }
+
 
     }
 }

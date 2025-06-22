@@ -2,6 +2,8 @@
 using Product.Application.Services;
 using ProductDomain.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Product.API.Controllers
 {
@@ -47,7 +49,8 @@ namespace Product.API.Controllers
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
 
-        // PUT: api/Course/5
+        // PUT: api/Course/
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Course course)
         {
@@ -61,20 +64,16 @@ namespace Product.API.Controllers
             return Ok(updated);
         }
 
-        // DELETE: api/Course/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var course = await _course.GetAsync(id);
-            if (course == null || course.Deleted)
-                return NotFound();
-
-            course.Deleted = true;
-            var result = await _course.UpdateAsync(course);
-
-            return Ok(result);
+            var success = await _course.DeleteAsync(id);
+            if (!success) return NotFound();
+            return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("restore/{id}")]
         public async Task<IActionResult> Restore(int id)
         {

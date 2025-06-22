@@ -18,9 +18,19 @@ public class CourseService : ICourseService
     {
         _repository = repository;
         _cache = cache;
-        var redis = ConnectionMultiplexer.Connect("localhost:6379");
-        _redisDb = redis.GetDatabase();
+
+        try
+        {
+            var redis = ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false");
+            _redisDb = redis.GetDatabase();
+        }
+        catch (RedisConnectionException ex)
+        {
+            Console.WriteLine("Nie udało się połączyć z Redis: " + ex.Message);
+            _redisDb = null!;
+        }
     }
+
 
     public async Task<List<Course>> GetAllAsync()
     {
@@ -59,21 +69,15 @@ public class CourseService : ICourseService
 
         return result;
     }
-
-    public Course Add(Course course)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var result = _repository.AddCourseAsync(course).Result;
-
-        return result;
+        return await _repository.DeleteCourseAsync(id);
     }
 
-    public async Task<Course> RestoreAsync(int id)
+    public async Task<Course?> RestoreAsync(int id)
     {
-        var course = await _repository.GetCourseAsync(id);
-        if (course == null) return null;
-
-        course.Deleted = false;
-        return await _repository.UpdateCourseAsync(course);
+        return await _repository.RestoreCourseAsync(id);
     }
+
 
 }

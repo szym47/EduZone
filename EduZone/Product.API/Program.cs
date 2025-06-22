@@ -3,8 +3,10 @@ using Product.Application.Services;
 using Product.Domain.Repositories;
 using Product.Domain.Seeders;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace Product.API;
 public class Program
@@ -15,31 +17,74 @@ public class Program
 
         var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
-
-        //builder.Services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("TestDb"), ServiceLifetime.Transient);
         builder.Services.AddDbContext<DataContext>(options =>
             options.UseSqlServer(connectionString), ServiceLifetime.Transient);
         builder.Services.AddScoped<IRepository, Repository>();
-
-
-        // Add services to the container.
-        builder.Services.AddScoped<CourseService, CourseService>();
+        builder.Services.AddScoped<ICourseService, CourseService>();
         builder.Services.AddScoped<ICategoryService, CategoryService>();
-
-
-
-        builder.Services.AddControllers();
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-
-
         builder.Services.AddScoped<ICourseSeeder, CourseSeeder>();
         builder.Services.AddMemoryCache();
 
+        // JWT Auth config
+        var jwtSettings = builder.Configuration.GetSection("Jwt");
+        var jwtKey = jwtSettings["Key"];
+        var jwtIssuer = jwtSettings["Issuer"];
+        var jwtAudience = jwtSettings["Audience"];
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtIssuer,
+                ValidAudience = jwtAudience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
+            };
+        });
+
+        builder.Services.AddAuthorization();
+
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Product.API", Version = "v1" });
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "Wpisz token w formacie: Bearer {token}",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
+        });
+
         var app = builder.Build();
+
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<DataContext>();
@@ -47,7 +92,7 @@ public class Program
             var seeder = scope.ServiceProvider.GetRequiredService<ICourseSeeder>();
             await seeder.Seed();
         }
-        // Configure the HTTP request pipeline.
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -56,13 +101,10 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
-
-
-
-
 
         app.Run();
     }

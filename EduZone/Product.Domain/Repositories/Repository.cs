@@ -40,6 +40,28 @@ namespace Product.Domain.Repositories
             await _context.SaveChangesAsync();
             return course;
         }
+        public async Task<bool> DeleteCourseAsync(int id)
+        {
+            var course = await _context.Courses.FindAsync(id);
+            if (course == null) return false;
+
+            course.Deleted = true;
+            _context.Courses.Update(course);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<Course?> RestoreCourseAsync(int id)
+        {
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+            if (course == null) return null;
+
+            course.Deleted = false;
+            _context.Courses.Update(course);
+            await _context.SaveChangesAsync();
+            return course;
+        }
+
 
         #endregion
 
@@ -77,15 +99,22 @@ namespace Product.Domain.Repositories
             var category = await _context.Categories.FindAsync(id);
             if (category == null) return false;
 
-            _context.Categories.Remove(category);
+            category.Deleted = true; // soft delete
+            _context.Categories.Update(category);
             await _context.SaveChangesAsync();
             return true;
-
-
         }
 
+        public async Task<Category?> RestoreCategoryAsync(int id)
+        {
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            if (category == null) return null;
+
+            category.Deleted = false;
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
+            return category;
+        }
         #endregion
-
-
     }
 }
