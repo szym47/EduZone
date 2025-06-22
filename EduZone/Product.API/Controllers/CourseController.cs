@@ -20,7 +20,7 @@ namespace Product.API.Controllers
 
         // GET: api/Course
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             var result = await _course.GetAllAsync();
             return Ok(result);

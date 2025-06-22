@@ -88,7 +88,12 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-            await db.Database.MigrateAsync();
+
+            if (!db.Database.IsInMemory())
+            {
+                await db.Database.MigrateAsync();
+            }
+
             var seeder = scope.ServiceProvider.GetRequiredService<ICourseSeeder>();
             await seeder.Seed();
         }
