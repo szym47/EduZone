@@ -31,24 +31,26 @@ services:
       dockerfile: Cart.API/Dockerfile
 
   order.api:
-     image: ${DOCKER_REGISTRY-}order.api
-     depends_on:
-       - db
-     environment:
+    image: ${DOCKER_REGISTRY-}order.api
+    depends_on:
+      - db
+    environment:
        - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
-     build:
-       context: .
-       dockerfile: Order.API/Dockerfile
+    build:
+      context: .
+      dockerfile: Order.API/Dockerfile
 
-  # payment.api:
-  #   image: ${DOCKER_REGISTRY-}payment.api
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
-  #   build:
-  #     context: .
-  #     dockerfile: Payment.API/Dockerfile
+  payment.api:
+    image: ${DOCKER_REGISTRY-}payment.api
+    depends_on:
+      - db
+    environment:
+      - CONNECTION_STRING=Server=${DB_HOST};Database=${DB_NAME};User Id=${DB_USER};Password=${SA_PASSWORD};Encrypt=False;TrustServerCertificate=True;
+    build:
+      context: .
+      dockerfile: Payment.API/Dockerfile
+    ports:
+      - "5004:8080"
 
   invoice.api:
     image: ${DOCKER_REGISTRY-}invoice.api
@@ -77,4 +79,4 @@ services:
       - "6379:6379"
 
 volumes:
-  mssql_data:  
+  mssql_data:
