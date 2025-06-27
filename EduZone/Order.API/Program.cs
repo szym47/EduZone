@@ -1,3 +1,7 @@
+using MediatR;
+using Order.Domain.Services;
+using Order.Domain.Interfaces;
+using Order.Infrastructure.Repositories;
 
 namespace Order.API
 {
@@ -7,16 +11,19 @@ namespace Order.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(OrderService).Assembly));
+
+            builder.Services.AddSingleton<IOrderRepository, InMemoryOrderRepository>();
+            builder.Services.AddSingleton<IOrderCreator, OrderService>();
+            builder.Services.AddSingleton<IOrderCanceler, OrderService>();
+            builder.Services.AddSingleton<IOrderReader, OrderService>();
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -24,12 +31,8 @@ namespace Order.API
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }

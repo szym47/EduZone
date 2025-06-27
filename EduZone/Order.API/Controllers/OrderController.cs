@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Order.Application.Commands;
-using Order.Application.Queries;
-using System;
-using System.Threading.Tasks;
+using Order.Domain.Commands;
+using Order.Domain.Models;
+using Order.Domain.Queries;
 
 namespace Order.API.Controllers
 {
@@ -18,15 +17,15 @@ namespace Order.API.Controllers
             _mediator = mediator;
         }
 
-        // Tworzenie zamówienia  
+        // POST /order/create
         [HttpPost("create")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand command)
         {
             var orderId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetOrderById), new { id = orderId }, orderId);
+            return CreatedAtAction(nameof(GetOrder), new { orderId }, orderId);
         }
 
-        // Anulowanie zamówienia  
+        // POST /order/cancel
         [HttpPost("cancel")]
         public async Task<IActionResult> CancelOrder([FromBody] CancelOrderCommand command)
         {
@@ -34,21 +33,20 @@ namespace Order.API.Controllers
             return Ok();
         }
 
-        // Pobranie pojedynczego zamówienia  
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetOrderById(Guid id)
+        // GET /order/{orderId}
+        [HttpGet("{orderId:int}")]
+        public async Task<IActionResult> GetOrder(int orderId)
         {
-            var query = new GetOrderByIdQuery(id);
-            var result = await _mediator.Send(query);
-            return result == null ? NotFound() : Ok(result);
+            var order = await _mediator.Send(new GetOrderByIdQuery { OrderId = orderId });
+            return order is null ? NotFound() : Ok(order);
         }
 
-        // Pobranie wszystkich zamówień  
+        // GET /order
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
-            var result = await _mediator.Send(new GetAllOrdersQuery());
-            return Ok(result);
+            var orders = await _mediator.Send(new GetAllOrdersQuery());
+            return Ok(orders);
         }
     }
 }
